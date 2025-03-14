@@ -49,7 +49,7 @@ O Rate Limiter utiliza o Redis para armazenar os tokens, quantidade de acessos, 
   * TOKEN_4_BLOCK_DURATION=100ms - tempo de bloqueio se exceder o limite é 100ms
   * USE_ONLY_IP_LIMITER=false - se for true, o rate limiter utiliza apenas o IP para limitar as requisições
   * USE_ONLY_TOKEN_LIMITER=false - se for true, o rate limiter utiliza apenas o token para limitar as requisições
-* `test/main_test.go` com testes automatizados para cada nível de acesso. Aguardar 10 segundos entre as execuções dos testes para dar tempo do redis limpar as requisições anteriores. Meu computador não é muito forte e não suporta altas cargas. Conseguir lidar bem com 500 requisições simultâneas.
+* `test/main_test.go` com testes automatizados para cada nível de acesso. Aguardar 10 segundos entre as execuções dos testes para dar tempo do redis limpar as requisições anteriores. Meu computador não é muito forte e não suporta altas cargas. Conseguir lidar bem com 500 requisições simultâneas. O docker-compose.yml deve estar up para a execução dos testes.
 * `api/requests.http` com exemplos de requisições para o serverrl no padrão 'REST Client'
 
 #### subprojeto tester
