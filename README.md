@@ -4,6 +4,21 @@
 
 ### projeto fullcycle-desafio-tecnico-rate-limiter
 
+O middleware valida o IP e o token de acesso e limita o acesso conforme o nivel de acesso informado.
+
+O Rate Limiter utiliza o Redis para armazenar os tokens, quantidade de acessos, bloqueios e expirações.
+
+    * consulta a chave
+    * se não existe, obtém a quantidade de requisições permitidas para o nível de acesso e cria a chave e libera acesso
+    * se existir, verifica se está bloqueado
+    * se estiver bloqueado, verifica se a expiração do bloqueio ainda é valida e desbloqueia se bloqueio expirou
+    * se estiber bloqueado, e não expirou, nega acesso
+    * se não estiver bloqueado, verifica se a quantidade de requisições permitidas ainda é valida
+    * se estiver, decrementa a quantidade de requisições permitidas e atualiza a chave e libera acesso
+    * se não estiver, verifica se o tempo limite já foi atingido
+    * se não foi atingido bloqueia a chave e nega acesso
+    * caso contrário, renova a expiração e quantidade de acessos e libera acesso
+
 * docker-compose.yml com configuração para redis e serverrl
 * o projeto fez amplo uso de `log/slog` que pode ser observado no log do container serverrl
 
