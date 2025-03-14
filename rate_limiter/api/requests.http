@@ -1,0 +1,26 @@
+### by IP level 0
+GET http://localhost:8080/ HTTP/1.1
+
+### by Token level 1
+GET http://localhost:8080/ HTTP/1.1
+API_KEY: 123abc
+
+### by Token level 2
+GET http://localhost:8080/ HTTP/1.1
+API_KEY: 223abc
+
+### by Token level 3
+GET http://localhost:8080/ HTTP/1.1
+API_KEY: 323abc
+
+### by Token level 4
+GET http://localhost:8080/ HTTP/1.1
+API_KEY: 43abc
+
+### by Token invalid
+GET http://localhost:8080/ HTTP/1.1
+API_KEY: 523abc
+
+### by Token invalid
+GET http://localhost:8080/ HTTP/1.1
+API_KEY: a23abc

@@ -1,0 +1,18 @@
+services:
+  redis:
+    container_name: redis
+    image: redis:latest
+    command: redis-server
+    # volumes:
+    #   - redis:/var/lib/redis
+    #   - redis-config:/usr/local/etc/redis/redis.conf
+    ports:
+      - 6379:6379
+  serverrl:
+    container_name: serverrl
+    build:
+      context: ./rate_limiter
+    depends_on:
+      - redis
+    ports:
+      - "8080:8080"

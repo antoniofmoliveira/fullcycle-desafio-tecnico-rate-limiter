@@ -1,0 +1,172 @@
+$ docker run --name limiter-redis  -p 6379:6379  -d redis
+
+github.com/go-redis/redis
+
+
+package main
+
+import (
+	"context"
+	"fmt"
+	"github.com/go-redis/redis/v8"
+)
+
+func main() {
+	client := redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "", // no password set
+		DB:       0,  // use default DB
+	})
+	pong, err := client.Ping().Result()
+	fmt.Println(pong, err)
+}
+
+
+
+// we can call set with a `Key` and a `Value`. 
+err = client.Set(context.Background(), "name", "Elliot", 0).Err()
+// if there has been an error setting the value
+// handle the error
+if err != nil {
+    fmt.Println(err)
+}
+
+
+
+val, err := client.Get(context.Background(), "name").Result()
+if err != nil {
+    fmt.Println(err)
+}
+
+fmt.Println(val)
+
+
+
+
+main.go
+package main
+
+import (
+	"fmt"
+
+	"encoding/json"
+	"github.com/go-redis/redis"
+)
+
+type Author struct {
+	Name string `json:"name"`
+	Age int `json:"age"`
+}
+
+func main() {
+    client := redis.NewClient(&redis.Options{
+		Addr: "localhost:6379",
+		Password: "",
+		DB: 0,
+    })
+    
+    json, err := json.Marshal(Author{Name: "Elliot", Age: 25})
+    if err != nil {
+        fmt.Println(err)
+    }
+
+	ctx := context.Background()
+
+    err = client.Set(ctx, "id1234", json, 0).Err()
+    if err != nil {
+        fmt.Println(err)
+    }
+    val, err := client.Get(ctx, "id1234").Result()
+    if err != nil {
+        fmt.Println(err)
+    }
+    fmt.Println(val)
+}
+
+
+
+
+
+ID ip ou token
+    level 0=IP 1=Token1 2=Token2 3=Token3 4=Token4
+    timestamp init
+    qt_access_remain
+    blocked_until
+
+verifica se tem token
+    se nao tem token
+        verifica IP existe
+            se nao existe
+                inicializa registro
+                libera acesso
+            se tem IP
+        verifica se bloqueado
+            se bloqueado
+                nega acesso
+        verifica qt_access_remain
+            se qt_access_remain > 0
+                decrementa qt_access_remain
+                atualiza registro
+                libera acesso
+            se qt_access_remain <= 0
+                bloqueia
+                nega acesso
+    se tem token
+        verifica se token existe
+            se nao existe
+                inicializa registro
+                    verifica level
+                libera acesso
+        verifica se bloqueado
+            se bloqueado
+                nega acesso
+        verifica qt_access_remain
+            se qt_access_remain > 0
+                decrementa qt_access_remain
+                atualiza registro
+                libera acesso
+            se qt_access_remain <= 0
+                bloqueia
+                nega acesso
+
+
+No token
+Qt requests: 1000 by second
+Status code:    Qt Resp
+429:            995
+200:            5
+Time elapsed: 169.453062ms
+
+Token level 1
+Qt requests: 1000 by second
+Status code:    Qt Resp
+429:            990
+200:            10
+Time elapsed: 135.046022ms
+
+Token level 2
+Qt requests: 1000 by second
+Status code:    Qt Resp
+429:            980
+200:            20
+Time elapsed: 128.598629ms
+
+Token level 3
+Qt requests: 1000 by second
+Status code:    Qt Resp
+200:            50
+429:            950
+Time elapsed: 136.236282ms
+
+Token level 4
+Qt requests: 1000 by second
+Status code:    Qt Resp
+200:            100
+429:            900
+Time elapsed: 133.506592ms
+
+Token fail
+Qt requests: 1000 by second
+Status code:    Qt Resp
+401:            1000
+Time elapsed: 102.315997ms
